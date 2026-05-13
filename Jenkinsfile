@@ -17,18 +17,21 @@ pipeline {
                bat 'node app.js'
             }
         }
-         stage('Run Tests') {
+        stage('Run Tests') {
             steps {
                bat 'node test'
             }
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t ci-node-app .'
+            }
         }
-    }
-    post {
-        success {
-            echo 'CI Pipeline Success'
-        }
-        failure{
-            echo 'CI Pipeline Failure'
+        stage('Run Docker Container') {
+            steps {
+                bat 'docker run -d -p 3000:3000 --name ci-container ci-node-app'
+            }
+         }
         }
     }
 }
+
